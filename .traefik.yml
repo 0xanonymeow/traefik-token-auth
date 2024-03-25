@@ -1,0 +1,12 @@
+displayName: Token Auth
+type: middleware
+import: github.com/0xanonymeow/traefik-token-auth
+summary: "Token-based authentication middleware."
+testData:
+  headerField: X-Api-Token
+  removeHeader: true
+  # (bcrypt) plaintext: pass, cost: 5
+  hashedToken: $2y$05$aNQMGzpGsz5KLKTJlXsSm.cHv6wMJi/qBEyin4xRlZlMvLgMuPOiS
+      
+iconPath: .assets/icon.png
+bannerPath: .assets/banner.png
