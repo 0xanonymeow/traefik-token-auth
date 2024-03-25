@@ -1,4 +1,4 @@
-// Package traefik_token_auth
+// Package traefik_token_auth .
 package traefik_token_auth
 
 import (
@@ -55,7 +55,6 @@ func (ta *TokenAuth) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	token := req.Header.Get(ta.headerField)
 	err := bcrypt.CompareHashAndPassword([]byte(ta.hashedToken), []byte(token))
-
 	if err != nil {
 		fmt.Printf("token is invalid")
 		rw.WriteHeader(http.StatusUnauthorized)
