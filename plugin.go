@@ -3,6 +3,8 @@ package traefik_token_auth
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 
@@ -14,6 +16,7 @@ type Config struct {
 	HeaderField  string
 	HashedToken  string
 	RemoveHeader bool
+	Algorithm    string
 }
 
 // CreateConfig creates the default plugin configuration.
@@ -22,6 +25,7 @@ func CreateConfig() *Config {
 		HeaderField:  "X-Api-Token",
 		HashedToken:  "",
 		RemoveHeader: true,
+		Algorithm:    "sha256",
 	}
 }
 
@@ -32,6 +36,7 @@ type TokenAuth struct {
 	headerField  string
 	hashedToken  string
 	removeHeader bool
+	algorithm    string
 }
 
 // New created a new token auth plugin.
@@ -44,6 +49,7 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 		headerField:  config.HeaderField,
 		hashedToken:  config.HashedToken,
 		removeHeader: config.RemoveHeader,
+		algorithm:    config.Algorithm,
 	}, nil
 }
 
@@ -54,11 +60,23 @@ func (ta *TokenAuth) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	token := req.Header.Get(ta.headerField)
-	err := bcrypt.CompareHashAndPassword([]byte(ta.hashedToken), []byte(token))
-	if err != nil {
-		fmt.Printf("token is invalid")
-		rw.WriteHeader(http.StatusUnauthorized)
-		return
+
+	switch ta.algorithm {
+	case "sha256":
+		sum := sha256.Sum256([]byte(token))
+
+		if hex.EncodeToString(sum[:]) != ta.hashedToken {
+			fmt.Printf("token is invalid")
+			rw.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+	case "bcrypt":
+		err := bcrypt.CompareHashAndPassword([]byte(ta.hashedToken), []byte(token))
+		if err != nil {
+			fmt.Printf("token is invalid")
+			rw.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 	}
 
 	if ta.removeHeader {

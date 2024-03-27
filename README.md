@@ -11,7 +11,7 @@ experimental:
   plugins:
     traefik-token-auth:
       moduleName: github.com/0xanonymeow/traefik-token-auth
-      version: v0.1.0
+      version: v0.1.1
 
 ```
 
@@ -42,6 +42,6 @@ http:
         traefik-token-auth:
           headerField: X-Api-Token
           removeHeader: true
-          # (bcrypt) plaintext: pass, cost: 5
-          hashedToken: $2y$05$aNQMGzpGsz5KLKTJlXsSm.cHv6wMJi/qBEyin4xRlZlMvLgMuPOiS
+          algorithm: sha256
+          hashedToken: d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1
 ```

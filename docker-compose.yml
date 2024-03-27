@@ -29,10 +29,13 @@ services:
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       - traefik.http.middlewares.tokenAuth.plugin.traefik-token-auth.headerField=X-Api-Token
       - traefik.http.middlewares.tokenAuth.plugin.traefik-token-auth.removeHeader=true
-      # (bcrypt) plaintext: pass, cost: 5
-      - traefik.http.middlewares.tokenAuth.plugin.traefik-token-auth.hashedToken=$$2y$$05$$aNQMGzpGsz5KLKTJlXsSm.cHv6wMJi/qBEyin4xRlZlMvLgMuPOiS
+      - traefik.http.middlewares.tokenAuth.plugin.traefik-token-auth.algorithm=sha256
+      - traefik.http.middlewares.tokenAuth.plugin.traefik-token-auth.hashedToken=d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1
   whoami:
-    image: traefik/whoami
+    image: whoami
+    build:
+      context: ../whoami
+      dockerfile: Dockerfile
     container_name: whoami
     labels:
       - traefik.enable=true
